@@ -1,3 +1,4 @@
+# -*- coding: utf-8 -*-
 """
 SentiSlack
 
@@ -30,18 +31,42 @@ load_dotenv('.env')
 from vaderSentiment.vaderSentiment import SentimentIntensityAnalyzer
 analyzer = SentimentIntensityAnalyzer()
 
+authed_teams = {}
+
 
 def main():
-    auth = tweepy.OAuthHandler(
-        os.getenv("CONSUMER_KEY"), os.getenv("CONSUMER_SECRET"))
-    auth.set_access_token(
-        os.getenv("ACCESS_TOKEN"), os.getenv("ACCESS_TOKEN_SECRET"))
-    api = tweepy.API(auth, parser=tweepy.parsers.JSONParser())
-    print("Bot Initialized!")
 
 
-if __name__ == "__main__":
-    while True:
-        main()
-        time.sleep(60 * 60)
-    print("Received shutdown signal. Goodbye!")
+
+class Bot(object):
+    """ Instanciates a Bot object to handle Slack onboarding interactions."""
+
+    def __init__(self):
+        super(Bot, self).__init__()
+        self.name = "SentiSlack"
+        self.emoji = ":robot_face:"
+        self.oauth = {
+            "client_id": os.environ.get("SLACK_CLIENT_ID"),
+            "client_secret": os.environ.get("SLACK_CLIENT_SECRET"),
+            "scope": "bot"
+        }
+        self.verification = os.environ.get("SLACK_VERIFICATION_TOKEN")
+        self.client = SlackClient("")
+        self.messages = {}
+
+        auth = tweepy.OAuthHandler(os.getenv("CONSUMER_KEY"), os.getenv("CONSUMER_SECRET"))
+        auth.set_access_token(os.getenv("ACCESS_TOKEN"), os.getenv("ACCESS_TOKEN_SECRET"))
+        self.tweepy_api = tweepy.API(auth, parser=tweepy.parsers.JSONParser())
+        print("Bot Initialized!")
+
+    def auth(self, code):
+        auth_response = self.client.api_call(
+            "oauth.access",
+            client_id=self.oauth["client_id"],
+            client_secret=self.oauth["client_secret"],
+            code=code)
+        team_id = auth_response["team_id"]
+        authed_teams[team_id] = {
+            "bot_token": auth_response["bot"]["bot_access_token"]
+        }
+        self.client = SlackClient(authed_teams[team_id]["bot_token"])
