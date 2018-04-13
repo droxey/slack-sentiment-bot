@@ -1,0 +1,11 @@
+tweepy==3.6.0
+python-dotenv==0.8.2
+matplotlib==2.2.2
+seaborn==0.8.1
+pandas==0.22.0
+numpy==1.14.2
+PyGithub==1.39
+vaderSentiment==2.5
+PyJWT==1.6.1
+uritemplate==3.0.0
+github3.py==1.1.0
