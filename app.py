@@ -20,11 +20,11 @@ def _event_handler(event_type, slack_event):
     return make_response(message, 200, {"X-Slack-No-Retry": 1})
 
 
-@app.route("/install", methods=["GET"])
+@app.route("/", methods=["GET"])
 def pre_install():
     client_id = SensiSlackBot.oauth["client_id"]
     scope = SensiSlackBot.oauth["scope"]
-    return render_template("install.html", client_id=client_id, scope=scope)
+    return render_template("index.html", client_id=client_id, scope=scope)
 
 
 @app.route("/thanks", methods=["GET", "POST"])

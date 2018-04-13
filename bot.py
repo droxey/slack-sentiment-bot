@@ -23,6 +23,9 @@ import seaborn as sns
 import tweepy
 import pprint as pp
 
+# Slack wrapper.
+from slackclient import SlackClient
+
 # Load environment variables.
 from dotenv import load_dotenv
 load_dotenv('.env')
@@ -32,10 +35,6 @@ from vaderSentiment.vaderSentiment import SentimentIntensityAnalyzer
 analyzer = SentimentIntensityAnalyzer()
 
 authed_teams = {}
-
-
-def main():
-
 
 
 class Bot(object):
@@ -54,8 +53,10 @@ class Bot(object):
         self.client = SlackClient("")
         self.messages = {}
 
-        auth = tweepy.OAuthHandler(os.getenv("CONSUMER_KEY"), os.getenv("CONSUMER_SECRET"))
-        auth.set_access_token(os.getenv("ACCESS_TOKEN"), os.getenv("ACCESS_TOKEN_SECRET"))
+        auth = tweepy.OAuthHandler(
+            os.getenv("CONSUMER_KEY"), os.getenv("CONSUMER_SECRET"))
+        auth.set_access_token(
+            os.getenv("ACCESS_TOKEN"), os.getenv("ACCESS_TOKEN_SECRET"))
         self.tweepy_api = tweepy.API(auth, parser=tweepy.parsers.JSONParser())
         print("Bot Initialized!")
 
